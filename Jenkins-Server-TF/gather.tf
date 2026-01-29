@@ -7,5 +7,5 @@ data "aws_ami" "jenkins-ami" {
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
-  owners = ["099720109477"] 
+  owners = ["099720109477"]
 }

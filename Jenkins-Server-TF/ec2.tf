@@ -1,10 +1,10 @@
 resource "aws_instance" "ec2" {
-  ami = aws_ami.jenkins-ami.id
-  instance_type = "m7i-flex-large"
-  key_name = var.key-name
-  subnet_id = aws_subnet.public-subnet.id
+  ami                    = data.aws_ami.jenkins-ami.id
+  instance_type          = "m7i-flex.large"
+  key_name               = var.key-name
+  subnet_id              = aws_subnet.public-subnet.id
   vpc_security_group_ids = [aws_security_group.security-group.id]
-  iam_instance_profile = aws_iam_instance_profile.instance_profile.name
+  iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
   root_block_device {
     volume_size = 30
   }
