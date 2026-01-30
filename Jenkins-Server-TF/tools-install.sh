@@ -12,6 +12,10 @@ echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
 sudo apt update
 sudo apt install jenkins -y
 
+# alternative 
+wget https://pkg.jenkins.io/debian-stable/binary/jenkins_2.426.3_all.deb
+sudo apt install ./jenkins_2.426.3_all.deb
+
 # Installing Docker
 sudo apt update
 sudo apt install docker.io -y

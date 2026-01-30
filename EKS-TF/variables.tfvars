@@ -1,0 +1,7 @@
+cluster-name        = "Tetris-EKS-Cluster"
+vpc-name            = "Jenkins-vpc"
+subnet-name         = "Jenkins-subnet"
+igw-name            = "Jenkins-igw"
+security-group-name = "Jenkins-sg"
+subnet-name2        = "Jenkins-subnet2"
+rt2-name            = "Jenkins-rt2"
