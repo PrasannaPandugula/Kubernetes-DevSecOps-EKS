@@ -5,3 +5,4 @@ variable "igw-name" {}
 variable "security-group-name" {}
 variable "subnet-name2" {}
 variable "rt2-name" {}
+variable "node-group-name" {}
