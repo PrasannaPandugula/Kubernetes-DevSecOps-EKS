@@ -1,7 +1,7 @@
 properties ([
     parameters([
         string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name')
-        choice(choices: ['plan','apply','destroy'], description: 'select terraform actions', name: 'Terraform-Action')
+        choice(choices: ['plan','apply','dest'], description: 'select terraform actions', name: 'Terraform-Action')
     ])
 ])
 pipeline {
@@ -34,8 +34,8 @@ pipeline {
                                 sh 'terraform plan -var-file={params.'File-Name'}'
                             } else if(params.'Terraform-Action' == 'apply') {
                                 sh 'terraform apply -auto-approve -var-file={params.'File-Name'}'
-                            } else if(params.'Terraform-Action' == 'destory') {
-                                sh 'terraform destory -auto-approve -var-file={params.'File-Name'}'
+                            } else if(params.'Terraform-Action' == 'destroy') {
+                                sh 'terraform destroy -auto-approve -var-file={params.'File-Name'}'
                             } 
                             else {
                                 error "Invalid option for Terraform-Action: ${params.'erraform-Action'}"
