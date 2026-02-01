@@ -24,19 +24,7 @@ pipeline {
                 }
             }
         }
-
-        stage("Terraform plan") {
-            steps {
-                withAWS(credentials: 'aws-creds', region: 'eu-north-1') {
-                    dir('EKS-TF') {
-                        script {
-                            sh 'terraform plan -var-file={params.'File-Name'}'
-                        }
-                    }
-                }
-            }
-        }
-
+        
         stage("Terrafrom Action") {
             steps {
                withAWS(credentials: 'aws-creds', region: 'eu-north-1') {
@@ -46,7 +34,10 @@ pipeline {
                                 sh 'terraform plan -var-file={params.'File-Name'}'
                             } else if(params.'Terraform-Action' == 'apply') {
                                 sh 'terraform apply -auto-approve -var-file={params.'File-Name'}'
-                            } else {
+                            } else if(params.'Terraform-Action' == 'destory') {
+                                sh 'terraform destory -auto-approve -var-file={params.'File-Name'}'
+                            } 
+                            else {
                                 error "Invalid option for Terraform-Action: ${params.'erraform-Action'}"
                             }
                         }
