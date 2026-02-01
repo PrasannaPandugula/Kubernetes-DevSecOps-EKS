@@ -1,4 +1,4 @@
-resource "aws_vpc" "jenkins-vpc" {
+resource "aws_vpc" "vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
     Name = var.vpc-name
@@ -12,10 +12,15 @@ resource "aws_subnet" "public-subnet" {
   cidr_block              = "10.0.0.0/24"
   availability_zone       = "eu-north-1a"
   map_public_ip_on_launch = true
+
+  tags = {
+    Name = var.subnet-name
+  }
 }
 # igw
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.jenkins-vpc.id
+
   tags = {
     Name = var.igw-name
   }

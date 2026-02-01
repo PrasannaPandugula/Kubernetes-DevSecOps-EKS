@@ -1,28 +1,28 @@
 # Reusing existing configs created as part of EC2
 data "aws_vpc" "vpc" {
   filter {
-    name   = "tag:name"
+    name   = "tag:Name"
     values = [var.vpc-name]
   }
 }
 
 data "aws_subnet" "subnet" {
   filter {
-    name   = "tag:name"
+    name   = "tag:Name"
     values = [var.subnet-name]
   }
 }
 
 data "aws_internet_gateway" "igw" {
   filter {
-    name   = "tag:name"
+    name   = "tag:Name"
     values = [var.igw-name]
   }
 }
 
 data "aws_security_group" "sg-default" {
   filter {
-    name   = "tag:name"
+    name   = "tag:Name"
     values = [var.security-group-name]
   }
 }
