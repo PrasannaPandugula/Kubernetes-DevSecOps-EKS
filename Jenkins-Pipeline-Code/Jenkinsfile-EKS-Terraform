@@ -1,0 +1,58 @@
+properties ([
+    parameters([
+        string(defaultValues: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name')
+        choice(choices: ['plan','apply','destory'], description: 'select terraform actions', name: 'Terraform-Action')
+    ])
+])
+pipeline {
+    agent any
+    stages {
+        stage ("Checkout from Git") {
+            steps {
+                git branch: 'master', url: 'https://github.com/PrasannaPandugula/Kubernetes-DevSecOps-EKS.git'
+            }
+        }
+
+        stage ("Terraform init and validate") {
+            steps {
+                withAWS(credentials: 'aws-creds', region: 'eu-north-1') {
+                dir('EKS-TF'){
+                    script {
+                        sh 'terraform init && terraform validate'
+                    }
+                }
+                }
+            }
+        }
+
+        stage("Terraform plan") {
+            steps {
+                withAWS(credentials: 'aws-creds', region: 'eu-north-1') {
+                    dir('EKS-TF') {
+                        script {
+                            sh 'terraform plan -var-file={params.'File-Name'}'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Terrafrom Action") {
+            steps {
+               withAWS(credentials: 'aws-creds', region: 'eu-north-1') {
+                   dir('EKS-TF') {
+                        script {
+                            if(params.'Terraform-Action' == 'plan') {
+                                sh 'terraform plan -var-file={params.'File-Name'}'
+                            } else if(params.'Terraform-Action' == 'apply') {
+                                sh 'terraform apply -auto-approve -var-file={params.'File-Name'}'
+                            } else {
+                                error "Invalid option for Terraform-Action: ${params.'erraform-Action'}"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
