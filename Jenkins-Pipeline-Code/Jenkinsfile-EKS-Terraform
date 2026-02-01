@@ -7,8 +7,8 @@
 pipeline {
     agent any
     parameters(
-        string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name')
-        choice(choices: ['plan','apply','destroy'], description: 'select terraform actions', name: 'Terraform-Action')
+        string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name'),
+        choice(choices: ['plan', 'apply', 'destroy'], description: 'Select Terraform action', name: 'Terraform-Action')
     )
     stages {
         stage ("Checkout from Git") {
