@@ -1,5 +1,5 @@
 terraform {
-  backend "eks" {
+  backend "s3" {
     bucket       = "terraformstatefilestorage1"
     key          = "Kubernetes-DevSecOps-EKS/EKS-TF/terraform.tfstate"
     region       = "eu-north-1"
