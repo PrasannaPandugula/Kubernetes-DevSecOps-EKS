@@ -8,7 +8,7 @@ resource "aws_vpc" "vpc" {
 # subents, igw, route table and route table  associations, secutity group
 # subnet
 resource "aws_subnet" "public-subnet" {
-  vpc_id                  = aws_vpc.jenkins-vpc.id
+  vpc_id                  = aws_vpc.vpc.id
   cidr_block              = "10.0.0.0/24"
   availability_zone       = "eu-north-1a"
   map_public_ip_on_launch = true
@@ -27,7 +27,7 @@ resource "aws_internet_gateway" "igw" {
 }
 #route table
 resource "aws_route_table" "rt" {
-  vpc_id = aws_vpc.jenkins-vpc.id
+  vpc_id = aws_vpc.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
@@ -43,7 +43,7 @@ resource "aws_route_table_association" "rts" {
 }
 
 resource "aws_security_group" "security-group" {
-  vpc_id      = aws_vpc.jenkins-vpc.id
+  vpc_id      = aws_vpc.vpc.id
   description = "Allowing Jenkins, SonarQube and SSH access "
 
   ingress = [
