@@ -19,7 +19,7 @@ resource "aws_subnet" "public-subnet" {
 }
 # igw
 resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.jenkins-vpc.id
+  vpc_id = aws_vpc.vpc.id
 
   tags = {
     Name = var.igw-name
