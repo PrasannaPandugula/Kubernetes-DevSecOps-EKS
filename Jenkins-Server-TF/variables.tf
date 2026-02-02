@@ -1,5 +1,5 @@
 variable "iam-role" {}
-variable "vpc-name" {}
+variable "vpc_name" {}
 variable "igw-name" {}
 variable "rt-name" {}
 variable "sg-name" {}

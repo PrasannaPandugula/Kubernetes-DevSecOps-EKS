@@ -1,5 +1,5 @@
 variable "cluster-name" {}
-variable "vpc-name" {}
+variable "vpc_name" {}
 variable "subnet-name" {}
 variable "igw-name" {}
 variable "security-group-name" {}

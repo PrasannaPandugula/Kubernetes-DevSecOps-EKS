@@ -2,10 +2,10 @@
 data "aws_vpc" "vpc" {
   filter {
     name   = "tag:Name"
-    values = [var.vpc-name]
+    values = [var.vpc_name]
   }
 }
-
+data "aws_vpcs" "all" {}
 data "aws_subnet" "subnet" {
   filter {
     name   = "tag:Name"
