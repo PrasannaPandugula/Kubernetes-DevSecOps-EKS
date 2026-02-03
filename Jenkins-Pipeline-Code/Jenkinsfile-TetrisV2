@@ -40,7 +40,7 @@ pipeline {
 
         stage("Install Dependencies") {
             steps {
-                dir('Tetris-V1'){
+                dir('Tetris-V2'){
                     sh 'npm install'
                 }
             }
@@ -48,7 +48,7 @@ pipeline {
 
         stage("OWASP Dependency Check Scan") {
             steps {
-                dir('Tetris-V1'){
+                dir('Tetris-V2'){
                     dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
                 }
         
@@ -57,7 +57,7 @@ pipeline {
 
         stage("Trivy File Scan") {
             steps {
-                dir('Tetris-V1'){
+                dir('Tetris-V2'){
                     sh 'trivy fs --exit-code 1 --severity HIGH,CRITICAL . || true > trivy-report.txt'
                 }
             }
@@ -66,10 +66,10 @@ pipeline {
         stage("Docker Build Image") {
             steps {
                 script {
-                  dir('Tetris-V1') {
+                  dir('Tetris-V2') {
                     withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
                         sh 'docker system prune -f'
-                        sh 'docker build -t tetrisv1 .'
+                        sh 'docker build -t tetrisv2 .'
                     }
                    }
                 }
@@ -114,7 +114,7 @@ pipeline {
                         git config user.name "PrasannaPandugula"
                         BUILD_NUMBER=${BUILD_NUMBER}
                         echo ${BUILD_NUMBER}
-                        imageTag=$(grep -oP '(?<=tetrisv1:)[^ ]+' deployment-service.yml)
+                        imageTag=$(grep -oP '(?<=tetrisv2:)[^ ]+' deployment-service.yml)
                         echo $imageTag
                         sed -i "s/${imageTag}/${BUILD_NUMBER}/g" deployment-service.yml
                         git add deployment-service.yml
