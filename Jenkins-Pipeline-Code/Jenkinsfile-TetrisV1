@@ -1,0 +1,134 @@
+pipeline {
+    angent any
+    tools {
+        nodejs 'nodejs'
+    }
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+    }
+    stages {
+        stage("Workspace Cleaning") {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage("Checkout code") {
+            steps {
+                git branch: 'master', url: 'https://github.com/PrasannaPandugula/Kubernetes-DevSecOps-EKS.git'
+            }
+        }
+
+        stage("SonarQube Code Analysis") {
+            steps{
+                dir('Tetris-V1'){
+                    withSonarQubeEnv('sonar-scanner'){
+                        sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Tetris \
+                        -Dsonar.projectKey=Tetris '''
+                    }
+                }
+            }
+        }
+
+        stage("Quality Check") {
+           steps {
+                script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                }
+           }
+        }
+
+        stage("Install Dependencies") {
+            steps {
+                dir('Tetris-V1'){
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage("OWASP Dependency Check Scan") {
+            steps {
+                dir('Tetris-V1'){
+                    dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                }
+        
+            }
+        }
+
+        stage("Trivy File Scan") {
+            steps {
+                dir('Tetris-V1'){
+                    sh 'trivy fs --exit-code 1 --severity HIGH,CRITICAL . || true > trivy-report.txt'
+                }
+            }
+        }
+
+        stage("Docker Build Image") {
+            steps {
+                script {
+                  dir('Tetris-V1') {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        sh 'docker system prune -f'
+                        sh 'docker build -t tetrisv1 .'
+                    }
+                   }
+                }
+            }
+        }
+
+        stage("Docker Image Push") {
+            steps {
+               script {
+                withDockerRegistry(credentialsId: 'docker', tool: 'docker') {
+                    sh 'docker tag tetrisv1 prasannapandugula1/tetrisv1:${BUILD_NUMBER}'
+                    sh 'docker push prasannapandugula1/tetrisv1:${BUILD_NUMBER}'
+                }
+               }
+            }
+        }
+
+        stage("Trivy Image Scan") {
+            steps {
+                sh 'trivy image prasannapandugula1/tetrisv1:${BUILD_NUMBER} > trivy-image-report.txt'
+            }
+        }
+
+       stage("Checkout code") {
+            steps {
+                git branch: 'master', url: 'https://github.com/PrasannaPandugula/Kubernetes-DevSecOps-EKS.git'
+            }
+        }
+
+        stage("Checkout code") {
+            steps {
+                git branch: 'master', url: 'https://github.com/PrasannaPandugula/Kubernetes-DevSecOps-EKS.git'
+            }
+        }
+
+        // Update deployment file for new image changes
+        stage("Update K8s Deployment File") {
+            environment {
+                GIT_REPO_NAME = 'Kubernetes-DevSecOps-EKS'
+                GIT_USER_NAME = 'PrasannaPandugula'
+                
+            }
+            steps {
+                dir('Manifest-file'){
+                   withCredentials([string(credentialsId: 'github-personal-token', passwordVariable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        git config user.email "prasannapandugula@gmail.com"
+                        git config user.name "PrasannaPandugula"
+                        BUILD_NUMBER=${BUILD_NUMBER}
+                        echo ${BUILD_NUMBER}
+                        imageTag=$(grep -oP '(?<=tetrisv1:)[^ ]+' deployment-service.yml)
+                        echo $imageTag
+                        sed -i "s/${imageTag}/${BUILD_NUMBER}/g" deployment-service.yml
+                        git add deployment-service.yml
+                        git commit -m "Updating deployment Image version to \${BUILD_NUMBER} in deployment file"
+                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
+                    '''
+                   }
+                }
+            }
+    }   }
+}
