@@ -26,7 +26,8 @@ kind: Service
 metadata:
   name: tetris-service
 spec:
-  selector: tetris
+  selector: 
+    app: tetris
 ports:
   - protocol: TCP
     port: 80
