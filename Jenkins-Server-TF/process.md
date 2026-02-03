@@ -3,4 +3,5 @@
 3. Install plugins: aws creds (integrate with jenkins), pipeline: AWS steps, stage view, rebuilder,
 4. Jenkins job to create EKS cluster.
 5. configured multiple tools in Jenkins.
+6.Configure argo CD
 6. Deploy source code via Jenkins.
