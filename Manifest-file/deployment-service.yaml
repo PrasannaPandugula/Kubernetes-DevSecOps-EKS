@@ -28,8 +28,8 @@ metadata:
 spec:
   selector: 
     app: tetris
-ports:
-- protocol: TCP
-  port: 80
-  targetPort: 3000
-type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer
